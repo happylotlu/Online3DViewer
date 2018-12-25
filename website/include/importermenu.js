@@ -22,7 +22,7 @@ InfoTable.prototype.AddColorRow = function (name, color)
 
 	var valueColumn = document.createElement ('td');
 	var valueColumn = $('<td>').appendTo (tableRow);
-	
+
 	var colorDiv = $('<div>').addClass ('colorbutton').appendTo (valueColumn);
 	colorDiv.attr ('title', '(' + color[0] + ', ' + color[1] + ', ' + color[2] + ')');
 	var hexColor = JSM.RGBComponentsToHexColor (color[0] * 255.0, color[1] * 255.0, color[2] * 255.0);
@@ -146,7 +146,7 @@ ImporterButtons.prototype.AddLogo = function (title, onClick)
 
 ImporterButtons.prototype.AddButton = function (image, title, onClick)
 {
-	var buttonImage = $('<img>').addClass ('topbutton').attr ('src', image).attr ('title', title).appendTo (this.buttonsDiv);
+	var buttonImage = $('<div>').addClass ('topbutton').html (image).attr ('title', title).appendTo (this.buttonsDiv);
 	buttonImage.click (function () {
 		onClick ();
 	});
@@ -154,14 +154,14 @@ ImporterButtons.prototype.AddButton = function (image, title, onClick)
 
 ImporterButtons.prototype.AddToggleButton = function (image, toggleImage, title, onClick)
 {
-	var buttonImage = $('<img>').addClass ('topbutton').attr ('src', image).attr ('title', title).appendTo (this.buttonsDiv);
+	var buttonImage = $('<div>').addClass ('topbutton').html (image).attr ('title', title).appendTo (this.buttonsDiv);
 	var isOn = true;
 	buttonImage.click (function () {
 		isOn = !isOn;
 		if (isOn) {
-			buttonImage.attr ('src', image);
+			buttonImage.html(image);
 		} else {
-			buttonImage.attr ('src', toggleImage);
+			buttonImage.html(toggleImage);
 		}
 		onClick ();
 	});

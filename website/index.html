@@ -20,7 +20,9 @@
 	<script type="text/javascript" src="include/importerviewer.js"></script>
 	<script type="text/javascript" src="include/importermenu.js"></script>
 	<script type="text/javascript" src="include/importerapp.js"></script>
-	
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+
 	<!-- ExtensionIncludes -->
 	<script type="text/javascript" src="extensions/example/example.js"></script>
 	<!-- ExtensionIncludesEnd -->
@@ -36,15 +38,62 @@
 	</script>
 
 	<title>Online 3D Viewer</title>
-
+	<style>
+		.flex-row{
+			display: flex;
+			justify-content: flex-start
+		}
+		#top {
+			position: absolute;
+			left: 30px;
+			top: 30px;
+			z-index: 2;
+			background:rgba(0,0,0,0);
+		}
+		.buttons {
+			float: none;
+		}
+		.buttons img {
+			float: none;
+		}
+		.rightbuttons {
+			float: none;
+			display: none;
+		}
+		i {
+			color: #000;
+			font-size: 14px;
+		}
+		.topbutton {
+			width: 26px;
+			height: 26px;
+			background-color: #fff;
+			float: none !important;
+			text-align: center;
+			cursor: pointer;
+			border-radius: 3px;
+			border: 1px solid #999;
+			line-height: 26px;
+			margin-top: 4px;
+		}
+		.placeholder {
+			margin: 200px auto;
+			display: none;
+			font-size: 30px;
+			text-align: center;
+			min-width: 200px;
+			min-height: 30px;
+		}
+		</style>
 </head>
 
 <body>
-	<div id="top">
-	</div>
-	<div id="left">
-		<div id="menu"></div>
-	</div>
+	<div id="top"></div>
+
+	<!-- <div id="left"> -->
+		<!-- <div id="menu"></div> -->
+	<!-- </div> -->
+	<div class="placeholder"></div>
 	<canvas id="example" width="0" height="0"></canvas>
 	<input type="file" id="file" style="display:none" multiple></input>
 </body>
