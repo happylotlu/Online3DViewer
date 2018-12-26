@@ -530,22 +530,25 @@ ImporterApp.prototype.LoadFilesFromHash = function () {
   // var fileList = hash.split(',');
   // console.log(fileList, '====')
   // console.log(window.location.hash)
-  let a = '../../testzip/1024.zip'
-
-  var handleFile = new FileReader()
-  console.log(handleFile)
-  handleFile.onload = function () {
-    console.log(this)
+  axios({
+    url: 'http://0.0.0.0:8000/testzip/1024.zip',
+    method: 'GET',
+    responseType: 'blob', // important
+  }).then((res) => {
+    console.log(res)
+    var data = new Blob([res.data])
     var zip = new JSZip()
-    // zip.loadAsync(a).then((res) => {
-    //   console.log(res)
-    // })
-  }
-  // handleFile.onloadend = function (a) {
-  //   console.log(a)
-  // }
-  handleFile.onload(a)
-  console.log(handleFile)
+    console.log(data)
+    zip.loadAsync(data).then((response) => {
+      console.log(response.files)
+      // if ( zip.files[ 'model.obj' ] && zip.files[ 'materials.mtl' ] ) {
+      //   var materials = new THREE.MTLLoader().parse( zip.file( 'materials.mtl' ).asText() );
+      //   var object = new THREE.OBJLoader().setMaterials( materials ).parse( zip.file( 'model.obj' ).asText() );
+      //   editor.execute( new AddObjectCommand( object ) );
+
+      // }
+    })
+  })
   fileList = ['images/1024/wan.jpg', 'images/1024/wan.mtl', 'images/1024/wan.obj', 'images/1024/wan1.jpg', 'images/1024/wan2.jpg']
   this.ProcessFiles(fileList, true);
   console.log('loadingFiles')
