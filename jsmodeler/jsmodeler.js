@@ -109,6 +109,7 @@ JSM.IsWebGLEnabled = function () {
   return !0
 };
 JSM.IsFileApiEnabled = function () {
+  console.log('文件结束', 'IsFileApiEnabled')
   return !window.File || !window.FileReader || !window.FileList || !window.Blob || !window.URL ? !1 : !0
 };
 JSM.LoadJsonFile = function (a, b) {
@@ -5398,6 +5399,7 @@ JSM.GetStringBufferFromURL = function (a, b) {
 };
 JSM.GetStringBufferFromFile = function (a, b) {
   var c = new FileReader;
+  console.log('文件加载')
   c.onloadend = function (a) {
     if (a.target.readyState == FileReader.DONE && b.onReady) b.onReady(a.target.result)
   };

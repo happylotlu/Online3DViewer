@@ -301,37 +301,37 @@ ImporterApp.prototype.GenerateMenu = function () {
 
   var jsonData = this.viewer.GetJsonData();
   var menu = $('.placeholder');
-  var importerMenu = new ImporterMenu (menu);
+  var importerMenu = new ImporterMenu(menu);
 
-  var filesGroup = AddDefaultGroup (importerMenu, 'Files', 'filesmenuitem');
-  filesGroup.AddSubItem (this.fileNames.main);
+  var filesGroup = AddDefaultGroup(importerMenu, 'Files', 'filesmenuitem');
+  filesGroup.AddSubItem(this.fileNames.main);
   var i;
   for (i = 0; i < this.fileNames.requested.length; i++) {
-  	filesGroup.AddSubItem (this.fileNames.requested[i]);
+    filesGroup.AddSubItem(this.fileNames.requested[i]);
   }
 
   if (this.fileNames.missing.length > 0) {
-  	var missingFilesGroup = AddDefaultGroup (importerMenu, 'Missing Files', 'missingfilesmenuitem');
-  	for (i = 0; i < this.fileNames.missing.length; i++) {
-  		missingFilesGroup.AddSubItem (this.fileNames.missing[i]);
-  	}
+    var missingFilesGroup = AddDefaultGroup(importerMenu, 'Missing Files', 'missingfilesmenuitem');
+    for (i = 0; i < this.fileNames.missing.length; i++) {
+      missingFilesGroup.AddSubItem(this.fileNames.missing[i]);
+    }
   }
 
-  var infoGroup = AddDefaultGroup (importerMenu, 'Information', 'informationmenuitem');
-  AddInformation (infoGroup, jsonData);
+  var infoGroup = AddDefaultGroup(importerMenu, 'Information', 'informationmenuitem');
+  AddInformation(infoGroup, jsonData);
 
-  var materialsGroup = AddDefaultGroup (importerMenu, 'Materials', 'materialsmenuitem');
+  var materialsGroup = AddDefaultGroup(importerMenu, 'Materials', 'materialsmenuitem');
   var material;
   for (i = 0; i < jsonData.materials.length; i++) {
-  	material = jsonData.materials[i];
-  	AddMaterial (importerMenu, materialsGroup, material);
+    material = jsonData.materials[i];
+    AddMaterial(importerMenu, materialsGroup, material);
   }
 
-  var meshesGroup = AddDefaultGroup (importerMenu, 'Meshes', 'meshesmenuitem');
+  var meshesGroup = AddDefaultGroup(importerMenu, 'Meshes', 'meshesmenuitem');
   var mesh;
   for (i = 0; i < jsonData.meshes.length; i++) {
-  	mesh = jsonData.meshes[i];
-  	AddMesh (this, importerMenu, meshesGroup, mesh, i);
+    mesh = jsonData.meshes[i];
+    AddMesh(this, importerMenu, meshesGroup, mesh, i);
   }
 };
 
@@ -357,15 +357,15 @@ ImporterApp.prototype.Generate = function (progressBar) {
     importerApp.inGenerate = true;
     var environment = {
       onStart: function (taskCount) {
-		  console.log(taskCount, '初始化')
+        console.log(taskCount, '初始化')
         progressBar.Init(taskCount);
       },
       onProgress: function (currentTask) {
-		  console.log('进度条加载中', currentTask)
+        console.log('进度条加载中', currentTask)
         progressBar.Step(currentTask + 1);
       },
       onFinish: function () {
-		  console.log('完成')
+        console.log('完成')
         importerApp.GenerateMenu();
         importerApp.inGenerate = false;
         importerApp.SetReadyForTest();
@@ -408,8 +408,8 @@ ImporterApp.prototype.Generate = function (progressBar) {
       ]
     });
   } else {
-	ShowMeshes(myThis, progressBar, false);
-	$('.placeholder').hide()
+    ShowMeshes(myThis, progressBar, false);
+    $('.placeholder').hide()
   }
 };
 
@@ -463,7 +463,7 @@ ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
   }
 
   var menu = $('.placeholder');
-//   menu.empty();
+  //   menu.empty();
   if (isUrl) {
     $('#example').hide()
     $('.placeholder').show()
@@ -480,6 +480,7 @@ ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
     },
     onReady: function (fileNames, jsonData) {
       myThis.fileNames = fileNames;
+      console.log(fileNames)
       myThis.viewer.SetJsonData(jsonData);
       menu.empty();
       var progressBar = new ImporterProgressBar(menu);
@@ -521,13 +522,30 @@ ImporterApp.prototype.ResetHash = function () {
 
 ImporterApp.prototype.LoadFilesFromHash = function () {
   // if (window.location.hash.length < 2) {
-  // 	return false;
+  //   return false;
   // }
 
   // var hash = window.location.hash;
-  // var hash = hash.substr (1, hash.length - 1);
-  // var fileList = hash.split (',');
+  // var hash = hash.substr(1, hash.length - 1);
+  // var fileList = hash.split(',');
   // console.log(fileList, '====')
+  // console.log(window.location.hash)
+  let a = '../../testzip/1024.zip'
+
+  var handleFile = new FileReader()
+  console.log(handleFile)
+  handleFile.onload = function () {
+    console.log(this)
+    var zip = new JSZip()
+    // zip.loadAsync(a).then((res) => {
+    //   console.log(res)
+    // })
+  }
+  // handleFile.onloadend = function (a) {
+  //   console.log(a)
+  // }
+  handleFile.onload(a)
+  console.log(handleFile)
   fileList = ['images/1024/wan.jpg', 'images/1024/wan.mtl', 'images/1024/wan.obj', 'images/1024/wan1.jpg', 'images/1024/wan2.jpg']
   this.ProcessFiles(fileList, true);
   console.log('loadingFiles')
