@@ -104,8 +104,8 @@ ImporterApp.prototype.Init = function() {
     '<i class="fas fa-plus"></i>',
     "放大",
     function() {
-      importerApp.viewer.viewer.navigation.Zoom(0.3);
-      importerApp.viewer.viewer.navigation.DrawCallback();
+      myThis.viewer.viewer.navigation.Zoom(0.2);
+      myThis.viewer.viewer.navigation.DrawCallback();
     }
   );
   this.importerButtons.AddButton(
@@ -113,8 +113,8 @@ ImporterApp.prototype.Init = function() {
     "缩小",
     function(e) {
       // console.log('缩小事件', myThis, ImporterApp.canvas, JSM.Navigation())
-      importerApp.viewer.viewer.navigation.Zoom(-0.3);
-      importerApp.viewer.viewer.navigation.DrawCallback();
+      myThis.viewer.viewer.navigation.Zoom(-0.3);
+      myThis.viewer.viewer.navigation.DrawCallback();
     }
   );
 
@@ -541,7 +541,9 @@ ImporterApp.prototype.ProcessFiles = function(fileList, isUrl) {
   if (isUrl) {
     $("#example").hide();
     $(".placeholder").show();
-    menu.html("文件处理中......");
+    menu.html(`<div class="mb-2">文件处理中......</div><div class="progress" style="width: 100%; height: 20px;">
+		<div class="progress-bar" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+	  </div>`);
   } else {
     menu.html("Loading files...");
   }
@@ -612,9 +614,9 @@ ImporterApp.prototype.LoadFilesFromHash = function() {
     responseType: "blob", // important,
     onDownloadProgress: function(progressEvent) {
       var progress = progressEvent.loaded / progressEvent.total;
-      console.log(parseInt(progress * 100), progressEvent);
       if (progressEvent.lengthComputable) {
-        console.log(progressEvent.lengthComputable);
+        $('.progress-bar').text(`${parseInt(progress * 100)}%`)
+        $('.progress-bar').css('width', `${parseInt(progress * 100)}%`)
       }
     }
   }).then(res => {
@@ -625,16 +627,12 @@ ImporterApp.prototype.LoadFilesFromHash = function() {
     zip.loadAsync(data).then(response => {
       console.log(response.files);
       var files = Object.values(response.files).splice(1);
-      // files.forEach(el => {
-      //   console.log(el)
-      // });
-      console.log(files);
-      // if ( zip.files[ 'model.obj' ] && zip.files[ 'materials.mtl' ] ) {
-      //   var materials = new THREE.MTLLoader().parse( zip.file( 'materials.mtl' ).asText() );
-      //   var object = new THREE.OBJLoader().setMaterials( materials ).parse( zip.file( 'model.obj' ).asText() );
-      //   editor.execute( new AddObjectCommand( object ) );
-
-      // }
+      files.forEach(el => {
+        // // console.log(el)
+        // zip.file(el.name).async('base64').then((res) => {
+        //   console.log(res)
+        // })
+      });
     });
   });
   fileList = [
