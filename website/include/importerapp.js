@@ -1,16 +1,16 @@
-ExtensionInterface = function(app) {
+ExtensionInterface = function (app) {
   this.app = app;
 };
 
-ExtensionInterface.prototype.GetButtonsDiv = function() {
+ExtensionInterface.prototype.GetButtonsDiv = function () {
   return this.app.extensionButtons.GetButtonsDiv();
 };
 
-ExtensionInterface.prototype.GetModelJson = function() {
+ExtensionInterface.prototype.GetModelJson = function () {
   return this.app.viewer.GetJsonData();
 };
 
-ImporterApp = function() {
+ImporterApp = function () {
   this.viewer = null;
   this.fileNames = null;
   this.inGenerate = false;
@@ -21,7 +21,7 @@ ImporterApp = function() {
   this.readyForTest = null;
 };
 
-ImporterApp.prototype.Init = function() {
+ImporterApp.prototype.Init = function () {
   if (!JSM.IsWebGLEnabled() || !JSM.IsFileApiEnabled()) {
     while (document.body.lastChild) {
       document.body.removeChild(document.body.lastChild);
@@ -43,17 +43,17 @@ ImporterApp.prototype.Init = function() {
   var myThis = this;
   var top = document.getElementById("top");
   this.importerButtons = new ImporterButtons(top);
-  this.importerButtons.AddButton(
-    '<i class="far fa-folder"></i>',
-    "Open File",
-    function() {
-      myThis.OpenFile();
-    }
-  );
+  // this.importerButtons.AddButton(
+  //   '<i class="far fa-folder"></i>',
+  //   "Open File",
+  //   function () {
+  //     myThis.OpenFile();
+  //   }
+  // );
   this.importerButtons.AddButton(
     '<i class="fas fa-arrows-alt"></i>',
     "Fit In Window",
-    function() {
+    function () {
       myThis.FitInWindow();
     }
   );
@@ -61,49 +61,49 @@ ImporterApp.prototype.Init = function() {
   this.importerButtons.AddButton(
     '<i class="fas fa-arrow-up"></i>',
     "顶部",
-    function() {
+    function () {
       myThis.SetNamedView("z");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-arrow-down"></i>',
     "底部",
-    function() {
+    function () {
       myThis.SetNamedView("-z");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-redo"></i>',
     "前部",
-    function() {
+    function () {
       myThis.SetNamedView("y");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-undo"></i>',
     "后部",
-    function() {
+    function () {
       myThis.SetNamedView("-y");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-arrow-left"></i>',
     "左部",
-    function() {
+    function () {
       myThis.SetNamedView("x");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-arrow-right"></i>',
     "右部",
-    function() {
+    function () {
       myThis.SetNamedView("-x");
     }
   );
   this.importerButtons.AddButton(
     '<i class="fas fa-plus"></i>',
     "放大",
-    function() {
+    function () {
       myThis.viewer.viewer.navigation.Zoom(0.2);
       myThis.viewer.viewer.navigation.DrawCallback();
     }
@@ -111,7 +111,7 @@ ImporterApp.prototype.Init = function() {
   this.importerButtons.AddButton(
     '<i class="fas fa-minus"></i>',
     "缩小",
-    function(e) {
+    function (e) {
       // console.log('缩小事件', myThis, ImporterApp.canvas, JSM.Navigation())
       myThis.viewer.viewer.navigation.Zoom(-0.3);
       myThis.viewer.viewer.navigation.DrawCallback();
@@ -143,21 +143,21 @@ ImporterApp.prototype.Init = function() {
   }
 };
 
-ImporterApp.prototype.ClearReadyForTest = function() {
+ImporterApp.prototype.ClearReadyForTest = function () {
   if (this.readyForTest !== null) {
     this.readyForTest.remove();
     this.readyForTest = null;
   }
 };
 
-ImporterApp.prototype.SetReadyForTest = function() {
+ImporterApp.prototype.SetReadyForTest = function () {
   this.readyForTest = $("<div>")
     .attr("id", "readyfortest")
     .hide()
     .appendTo($("body"));
 };
 
-ImporterApp.prototype.AddExtension = function(extension) {
+ImporterApp.prototype.AddExtension = function (extension) {
   if (!extension.IsEnabled()) {
     return;
   }
@@ -166,7 +166,7 @@ ImporterApp.prototype.AddExtension = function(extension) {
   extension.Init(extInterface);
 };
 
-ImporterApp.prototype.ShowAboutDialog = function() {
+ImporterApp.prototype.ShowAboutDialog = function () {
   console.log("显示数据");
   // var dialogText = [
   // 	'<div class="importerdialog">',
@@ -187,7 +187,7 @@ ImporterApp.prototype.ShowAboutDialog = function() {
   // });
 };
 
-ImporterApp.prototype.GetWelcomeText = function() {
+ImporterApp.prototype.GetWelcomeText = function () {
   var welcomeText = [
     '<div class="welcometitle">Welcome to Online 3D Viewer!</div>',
     '<div class="welcometext">Here you can view your local 3D models online. You have three ways to open a file. Use the open button above to select files, simply drag and drop files to this browser window, or define the url of the files as location hash.</div>',
@@ -198,7 +198,7 @@ ImporterApp.prototype.GetWelcomeText = function() {
   return welcomeText;
 };
 
-ImporterApp.prototype.Resize = function() {
+ImporterApp.prototype.Resize = function () {
   function SetWidth(elem, value) {
     elem.width = value;
     elem.style.width = value + "px";
@@ -222,7 +222,7 @@ ImporterApp.prototype.Resize = function() {
   this.aboutDialog.Resize();
 };
 
-ImporterApp.prototype.JsonLoaded = function(progressBar) {
+ImporterApp.prototype.JsonLoaded = function (progressBar) {
   var jsonData = this.viewer.GetJsonData();
   this.meshVisibility = {};
   var i;
@@ -233,7 +233,7 @@ ImporterApp.prototype.JsonLoaded = function(progressBar) {
   this.Generate(progressBar);
 };
 
-ImporterApp.prototype.GenerateMenu = function() {
+ImporterApp.prototype.GenerateMenu = function () {
   function AddDefaultGroup(menu, name, id) {
     var group = menu.AddGroup(name, {
       id: id,
@@ -269,7 +269,7 @@ ImporterApp.prototype.GenerateMenu = function() {
   function AddMaterial(importerMenu, materialsGroup, material) {
     materialsGroup.AddSubItem(material.name, {
       openCloseButton: {
-        onOpen: function(contentDiv, material) {
+        onOpen: function (contentDiv, material) {
           contentDiv.empty();
           var table = new InfoTable(contentDiv);
           table.AddColorRow("Ambient", material.ambient);
@@ -287,7 +287,7 @@ ImporterApp.prototype.GenerateMenu = function() {
   function AddMesh(importerApp, importerMenu, meshesGroup, mesh, meshIndex) {
     meshesGroup.AddSubItem(mesh.name, {
       openCloseButton: {
-        onOpen: function(contentDiv, mesh) {
+        onOpen: function (contentDiv, mesh) {
           contentDiv.empty();
           var table = new InfoTable(contentDiv);
 
@@ -324,13 +324,12 @@ ImporterApp.prototype.GenerateMenu = function() {
         title: "Show/Hide Information",
         userData: mesh
       },
-      userButtons: [
-        {
+      userButtons: [{
           id: "showhidemesh-" + meshIndex,
-          onCreate: function(image) {
+          onCreate: function (image) {
             image.attr("src", "images/visible.png");
           },
-          onClick: function(image, meshIndex) {
+          onClick: function (image, meshIndex) {
             var visible = importerApp.ShowHideMesh(meshIndex);
             image.attr(
               "src",
@@ -342,10 +341,10 @@ ImporterApp.prototype.GenerateMenu = function() {
         },
         {
           id: "fitinwindow-" + meshIndex,
-          onCreate: function(image) {
+          onCreate: function (image) {
             image.attr("src", "images/fitinwindowsmall.png");
           },
-          onClick: function(image, meshIndex) {
+          onClick: function (image, meshIndex) {
             importerApp.FitMeshInWindow(meshIndex);
           },
           title: "Show/Hide Mesh",
@@ -403,7 +402,7 @@ ImporterApp.prototype.GenerateMenu = function() {
   }
 };
 
-ImporterApp.prototype.GenerateError = function(errorMessage) {
+ImporterApp.prototype.GenerateError = function (errorMessage) {
   this.viewer.RemoveMeshes();
   var menu = $(".placeholder");
   menu.empty();
@@ -411,30 +410,28 @@ ImporterApp.prototype.GenerateError = function(errorMessage) {
   this.aboutDialog.Open({
     title: "Error",
     text: '<div class="importerdialog">' + errorMessage + "</div>",
-    buttons: [
-      {
-        text: "ok",
-        callback: function(dialog) {
-          dialog.Close();
-        }
+    buttons: [{
+      text: "ok",
+      callback: function (dialog) {
+        dialog.Close();
       }
-    ]
+    }]
   });
 };
 
-ImporterApp.prototype.Generate = function(progressBar) {
+ImporterApp.prototype.Generate = function (progressBar) {
   function ShowMeshes(importerApp, progressBar, merge) {
     importerApp.inGenerate = true;
     var environment = {
-      onStart: function(taskCount) {
+      onStart: function (taskCount) {
         console.log(taskCount, "初始化");
         progressBar.Init(taskCount);
       },
-      onProgress: function(currentTask) {
+      onProgress: function (currentTask) {
         console.log("进度条加载中", currentTask);
         progressBar.Step(currentTask + 1);
       },
-      onFinish: function() {
+      onFinish: function () {
         console.log("完成");
         importerApp.GenerateMenu();
         importerApp.inGenerate = false;
@@ -462,19 +459,17 @@ ImporterApp.prototype.Generate = function(progressBar) {
   if (jsonData.meshes.length > 250) {
     this.aboutDialog.Open({
       title: "Information",
-      text:
-        '<div class="importerdialog">The model contains a large number of meshes. It can cause performance problems. Would you like to merge meshes?</div>',
-      buttons: [
-        {
+      text: '<div class="importerdialog">The model contains a large number of meshes. It can cause performance problems. Would you like to merge meshes?</div>',
+      buttons: [{
           text: "yes",
-          callback: function(dialog) {
+          callback: function (dialog) {
             ShowMeshes(myThis, progressBar, true);
             dialog.Close();
           }
         },
         {
           text: "no",
-          callback: function(dialog) {
+          callback: function (dialog) {
             ShowMeshes(myThis, progressBar, false);
             dialog.Close();
           }
@@ -487,27 +482,27 @@ ImporterApp.prototype.Generate = function(progressBar) {
   }
 };
 
-ImporterApp.prototype.FitInWindow = function() {
+ImporterApp.prototype.FitInWindow = function () {
   this.viewer.FitInWindow();
 };
 
-ImporterApp.prototype.FitMeshInWindow = function(meshIndex) {
+ImporterApp.prototype.FitMeshInWindow = function (meshIndex) {
   this.viewer.FitMeshInWindow(meshIndex);
 };
 
-ImporterApp.prototype.SetFixUp = function() {
+ImporterApp.prototype.SetFixUp = function () {
   this.viewer.SetFixUp();
 };
 
-ImporterApp.prototype.SetNamedView = function(viewName) {
+ImporterApp.prototype.SetNamedView = function (viewName) {
   this.viewer.SetNamedView(viewName);
 };
 
-ImporterApp.prototype.SetView = function(viewType) {
+ImporterApp.prototype.SetView = function (viewType) {
   this.viewer.SetView(viewType);
 };
 
-ImporterApp.prototype.ShowHideMesh = function(meshIndex) {
+ImporterApp.prototype.ShowHideMesh = function (meshIndex) {
   this.meshVisibility[meshIndex] = !this.meshVisibility[meshIndex];
   if (this.meshVisibility[meshIndex]) {
     this.viewer.ShowMesh(meshIndex);
@@ -517,7 +512,7 @@ ImporterApp.prototype.ShowHideMesh = function(meshIndex) {
   return this.meshVisibility[meshIndex];
 };
 
-ImporterApp.prototype.ProcessFiles = function(fileList, isUrl) {
+ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
   this.ClearReadyForTest();
   this.aboutDialog.Close();
   if (this.inGenerate) {
@@ -549,14 +544,14 @@ ImporterApp.prototype.ProcessFiles = function(fileList, isUrl) {
   }
 
   processorFunc(userFiles, {
-    onError: function() {
+    onError: function () {
       myThis.GenerateError(
         "No readable file found. You can open 3ds, obj and stl files."
       );
       myThis.SetReadyForTest();
       return;
     },
-    onReady: function(fileNames, jsonData) {
+    onReady: function (fileNames, jsonData) {
       myThis.fileNames = fileNames;
       console.log(fileNames);
       myThis.viewer.SetJsonData(jsonData);
@@ -567,38 +562,38 @@ ImporterApp.prototype.ProcessFiles = function(fileList, isUrl) {
   });
 };
 
-ImporterApp.prototype.DragOver = function(event) {
+ImporterApp.prototype.DragOver = function (event) {
   event.stopPropagation();
   event.preventDefault();
   event.dataTransfer.dropEffect = "copy";
 };
 
-ImporterApp.prototype.Drop = function(event) {
+ImporterApp.prototype.Drop = function (event) {
   event.stopPropagation();
   event.preventDefault();
   this.ResetHash();
   this.ProcessFiles(event.dataTransfer.files, false);
 };
 
-ImporterApp.prototype.FileSelected = function(event) {
+ImporterApp.prototype.FileSelected = function (event) {
   event.stopPropagation();
   event.preventDefault();
   this.ResetHash();
   this.ProcessFiles(event.target.files, false);
 };
 
-ImporterApp.prototype.OpenFile = function() {
+ImporterApp.prototype.OpenFile = function () {
   var fileInput = document.getElementById("file");
   fileInput.click();
 };
 
-ImporterApp.prototype.ResetHash = function() {
+ImporterApp.prototype.ResetHash = function () {
   if (window.location.hash.length > 1) {
     window.location.hash = "";
   }
 };
 
-ImporterApp.prototype.LoadFilesFromHash = function() {
+ImporterApp.prototype.LoadFilesFromHash = function () {
   // if (window.location.hash.length < 2) {
   //   return false;
   // }
@@ -608,34 +603,7 @@ ImporterApp.prototype.LoadFilesFromHash = function() {
   // var fileList = hash.split(',');
   // console.log(fileList, '====')
   // console.log(window.location.hash)
-  axios({
-    url: "http://0.0.0.0:8000/testzip/1024.zip",
-    method: "GET",
-    responseType: "blob", // important,
-    onDownloadProgress: function(progressEvent) {
-      var progress = progressEvent.loaded / progressEvent.total;
-      if (progressEvent.lengthComputable) {
-        $('.progress-bar').text(`${parseInt(progress * 100)}%`)
-        $('.progress-bar').css('width', `${parseInt(progress * 100)}%`)
-      }
-    }
-  }).then(res => {
-    console.log(res);
-    var data = new Blob([res.data]);
-    var zip = new JSZip();
-    console.log(data);
-    zip.loadAsync(data).then(response => {
-      console.log(response.files);
-      var files = Object.values(response.files).splice(1);
-      files.forEach(el => {
-        // // console.log(el)
-        // zip.file(el.name).async('base64').then((res) => {
-        //   console.log(res)
-        // })
-      });
-    });
-  });
-  fileList = [
+  var fileList = [
     "images/1024/wan.jpg",
     "images/1024/wan.mtl",
     "images/1024/wan.obj",
@@ -647,10 +615,43 @@ ImporterApp.prototype.LoadFilesFromHash = function() {
   return true;
 };
 var importerApp;
-window.onload = function() {
+var files = []
+window.onload = function () {
   importerApp = new ImporterApp();
-  importerApp.Init();
-  // ExtensionIncludes
-  importerApp.AddExtension(new ExampleExtension());
-  // ExtensionIncludesEnd
+  axios({
+    url: "http://0.0.0.0:8000/testzip/1024.zip",
+    method: "GET",
+    responseType: "blob", // important,
+    onDownloadProgress: function (progressEvent) {
+      var progress = progressEvent.loaded / progressEvent.total;
+      if (progressEvent.lengthComputable) {
+        $('.progress-bar').text(`${parseInt(progress * 100)}%`)
+        $('.progress-bar').css('width', `${parseInt(progress * 100)}%`)
+      }
+    }
+  }).then(res => {
+    console.log(res);
+
+    var data = new Blob([res.data]);
+    var zip = new JSZip();
+    console.log(data);
+    zip.loadAsync(data).then(response => {
+      console.log(response.files);
+      files = Object.values(response.files).splice(1, Object.values(response.files).length);
+      console.log(files)
+      files.forEach(el => {
+        // // console.log(el)
+        el.async('blob').then((res) => {
+          var url = URL.createObjectURL(res)
+          // fileList.push(url)
+        })
+      });
+    });
+    importerApp.Init();
+    // ExtensionIncludes
+    importerApp.AddExtension(new ExampleExtension());
+    // ExtensionIncludesEnd
+    console.log(files)
+  });
+
 };
