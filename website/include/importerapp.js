@@ -1,16 +1,16 @@
-ExtensionInterface = function (app) {
+ExtensionInterface = function(app) {
   this.app = app;
 };
 
-ExtensionInterface.prototype.GetButtonsDiv = function () {
+ExtensionInterface.prototype.GetButtonsDiv = function() {
   return this.app.extensionButtons.GetButtonsDiv();
 };
 
-ExtensionInterface.prototype.GetModelJson = function () {
+ExtensionInterface.prototype.GetModelJson = function() {
   return this.app.viewer.GetJsonData();
 };
 
-ImporterApp = function () {
+ImporterApp = function() {
   this.viewer = null;
   this.fileNames = null;
   this.inGenerate = false;
@@ -21,93 +21,143 @@ ImporterApp = function () {
   this.readyForTest = null;
 };
 
-ImporterApp.prototype.Init = function () {
+ImporterApp.prototype.Init = function() {
   if (!JSM.IsWebGLEnabled() || !JSM.IsFileApiEnabled()) {
     while (document.body.lastChild) {
       document.body.removeChild(document.body.lastChild);
     }
 
-    var div = $('<div>').addClass('nosupport').appendTo($('body'));
-    div.html([
-      '<div id="nosupport">',
-      this.GetWelcomeText(),
-      '<div class="nosupporterror">You need a browser which supports the following technologies: WebGL, WebGLRenderingContext, File, FileReader, FileList, Blob, URL.</div>',
-      '</div>'
-    ].join(''));
+    var div = $("<div>")
+      .addClass("nosupport")
+      .appendTo($("body"));
+    div.html(
+      [
+        '<div id="nosupport">',
+        this.GetWelcomeText(),
+        '<div class="nosupporterror">You need a browser which supports the following technologies: WebGL, WebGLRenderingContext, File, FileReader, FileList, Blob, URL.</div>',
+        "</div>"
+      ].join("")
+    );
     return;
   }
   var myThis = this;
-  var top = document.getElementById('top');
+  var top = document.getElementById("top");
   this.importerButtons = new ImporterButtons(top);
-  this.importerButtons.AddButton('<i class="far fa-folder"></i>', 'Open File', function () {
-    myThis.OpenFile();
-  });
-  this.importerButtons.AddButton('<i class="fas fa-arrows-alt"></i>', 'Fit In Window', function () {
-    myThis.FitInWindow();
-  });
+  this.importerButtons.AddButton(
+    '<i class="far fa-folder"></i>',
+    "Open File",
+    function() {
+      myThis.OpenFile();
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-arrows-alt"></i>',
+    "Fit In Window",
+    function() {
+      myThis.FitInWindow();
+    }
+  );
   // this.importerButtons.AddToggleButton ('<i class="fas fa-upload"></i>', 'images/fixupgray.png', 'Enable/Disable Fixed Up Vector', function () { myThis.SetFixUp (); });
-  this.importerButtons.AddButton('<i class="fas fa-arrow-up"></i>', '顶部', function () {
-    myThis.SetNamedView('z');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-arrow-down"></i>', '底部', function () {
-    myThis.SetNamedView('-z');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-redo"></i>', '前部', function () {
-    myThis.SetNamedView('y');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-undo"></i>', '后部', function () {
-    myThis.SetNamedView('-y');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-arrow-left"></i>', '左部', function () {
-    myThis.SetNamedView('x');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-arrow-right"></i>', '右部', function () {
-    myThis.SetNamedView('-x');
-  });
-  this.importerButtons.AddButton('<i class="fas fa-plus"></i>', '放大', function () {
-    console.log('放大事件')
-  });
-  this.importerButtons.AddButton('<i class="fas fa-minus"></i>', '缩小', function (e) {
-    // console.log('缩小事件', myThis, ImporterApp.canvas, JSM.Navigation())
-  });
+  this.importerButtons.AddButton(
+    '<i class="fas fa-arrow-up"></i>',
+    "顶部",
+    function() {
+      myThis.SetNamedView("z");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-arrow-down"></i>',
+    "底部",
+    function() {
+      myThis.SetNamedView("-z");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-redo"></i>',
+    "前部",
+    function() {
+      myThis.SetNamedView("y");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-undo"></i>',
+    "后部",
+    function() {
+      myThis.SetNamedView("-y");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-arrow-left"></i>',
+    "左部",
+    function() {
+      myThis.SetNamedView("x");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-arrow-right"></i>',
+    "右部",
+    function() {
+      myThis.SetNamedView("-x");
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-plus"></i>',
+    "放大",
+    function() {
+      importerApp.viewer.viewer.navigation.Zoom(0.3);
+      importerApp.viewer.viewer.navigation.DrawCallback();
+    }
+  );
+  this.importerButtons.AddButton(
+    '<i class="fas fa-minus"></i>',
+    "缩小",
+    function(e) {
+      // console.log('缩小事件', myThis, ImporterApp.canvas, JSM.Navigation())
+      importerApp.viewer.viewer.navigation.Zoom(-0.3);
+      importerApp.viewer.viewer.navigation.DrawCallback();
+    }
+  );
 
   this.extensionButtons = new ExtensionButtons(top);
   this.aboutDialog = new FloatingDialog();
 
-  window.addEventListener('resize', this.Resize.bind(this), false);
+  window.addEventListener("resize", this.Resize.bind(this), false);
   this.Resize();
 
   this.viewer = new ImporterViewer();
-  this.viewer.Init('example');
+  this.viewer.Init("example");
 
-  window.addEventListener('dragover', this.DragOver.bind(this), false);
-  window.addEventListener('drop', this.Drop.bind(this), false);
+  window.addEventListener("dragover", this.DragOver.bind(this), false);
+  window.addEventListener("drop", this.Drop.bind(this), false);
 
-  var fileInput = document.getElementById('file');
-  fileInput.addEventListener('change', this.FileSelected.bind(this), false);
+  var fileInput = document.getElementById("file");
+  fileInput.addEventListener("change", this.FileSelected.bind(this), false);
 
   window.onhashchange = this.LoadFilesFromHash.bind(this);
   var hasHashModel = this.LoadFilesFromHash();
-  $('#example').show()
-  console.log(hasHashModel)
+  $("#example").show();
+  console.log(hasHashModel);
   if (!hasHashModel) {
-    console.log('开始显示数据1')
+    console.log("开始显示数据1");
     this.ShowAboutDialog();
   }
 };
 
-ImporterApp.prototype.ClearReadyForTest = function () {
+ImporterApp.prototype.ClearReadyForTest = function() {
   if (this.readyForTest !== null) {
     this.readyForTest.remove();
     this.readyForTest = null;
   }
 };
 
-ImporterApp.prototype.SetReadyForTest = function () {
-  this.readyForTest = $('<div>').attr('id', 'readyfortest').hide().appendTo($('body'));
+ImporterApp.prototype.SetReadyForTest = function() {
+  this.readyForTest = $("<div>")
+    .attr("id", "readyfortest")
+    .hide()
+    .appendTo($("body"));
 };
 
-ImporterApp.prototype.AddExtension = function (extension) {
+ImporterApp.prototype.AddExtension = function(extension) {
   if (!extension.IsEnabled()) {
     return;
   }
@@ -116,8 +166,8 @@ ImporterApp.prototype.AddExtension = function (extension) {
   extension.Init(extInterface);
 };
 
-ImporterApp.prototype.ShowAboutDialog = function () {
-  console.log('显示数据')
+ImporterApp.prototype.ShowAboutDialog = function() {
+  console.log("显示数据");
   // var dialogText = [
   // 	'<div class="importerdialog">',
   // 	this.GetWelcomeText (),
@@ -137,36 +187,34 @@ ImporterApp.prototype.ShowAboutDialog = function () {
   // });
 };
 
-ImporterApp.prototype.GetWelcomeText = function () {
+ImporterApp.prototype.GetWelcomeText = function() {
   var welcomeText = [
     '<div class="welcometitle">Welcome to Online 3D Viewer!</div>',
     '<div class="welcometext">Here you can view your local 3D models online. You have three ways to open a file. Use the open button above to select files, simply drag and drop files to this browser window, or define the url of the files as location hash.</div>',
     '<div class="welcometextformats">Supported formats: 3ds, obj, stl.</div>',
     '<div class="welcometext">Powered by <a target="_blank" href="https://github.com/mrdoob/three.js/">Three.js</a> and <a target="_blank" href="https://github.com/kovacsv/JSModeler">JSModeler</a>.</div>',
-    '<div class="welcometext"><a target="_blank" href="https://github.com/kovacsv/Online3DViewer"><img src="images/githublogo.png"/></a></div>',
-  ].join('');
+    '<div class="welcometext"><a target="_blank" href="https://github.com/kovacsv/Online3DViewer"><img src="images/githublogo.png"/></a></div>'
+  ].join("");
   return welcomeText;
 };
 
-ImporterApp.prototype.Resize = function () {
+ImporterApp.prototype.Resize = function() {
   function SetWidth(elem, value) {
     elem.width = value;
-    elem.style.width = value + 'px';
+    elem.style.width = value + "px";
   }
 
   function SetHeight(elem, value) {
     elem.height = value;
-    elem.style.height = value + 'px';
+    elem.style.height = value + "px";
   }
 
-  var top = document.getElementById('top');
-  var canvas = document.getElementById('example');
+  var top = document.getElementById("top");
+  var canvas = document.getElementById("example");
   var height = document.body.clientHeight;
-
 
   SetHeight(canvas, 0);
   SetWidth(canvas, 0);
-
 
   SetHeight(canvas, height);
   SetWidth(canvas, document.body.clientWidth);
@@ -174,23 +222,23 @@ ImporterApp.prototype.Resize = function () {
   this.aboutDialog.Resize();
 };
 
-ImporterApp.prototype.JsonLoaded = function (progressBar) {
+ImporterApp.prototype.JsonLoaded = function(progressBar) {
   var jsonData = this.viewer.GetJsonData();
   this.meshVisibility = {};
   var i;
   for (i = 0; i < jsonData.meshes.length; i++) {
     this.meshVisibility[i] = true;
   }
-  console.log(jsonData)
+  console.log(jsonData);
   this.Generate(progressBar);
 };
 
-ImporterApp.prototype.GenerateMenu = function () {
+ImporterApp.prototype.GenerateMenu = function() {
   function AddDefaultGroup(menu, name, id) {
     var group = menu.AddGroup(name, {
       id: id,
       openCloseButton: {
-        title: 'Show/Hide ' + name
+        title: "Show/Hide " + name
       }
     });
     return group;
@@ -213,24 +261,24 @@ ImporterApp.prototype.GenerateMenu = function () {
       }
     }
 
-    infoTable.AddRow('Material count', materialCount);
-    infoTable.AddRow('Vertex count', vertexCount);
-    infoTable.AddRow('Triangle count', triangleCount);
+    infoTable.AddRow("Material count", materialCount);
+    infoTable.AddRow("Vertex count", vertexCount);
+    infoTable.AddRow("Triangle count", triangleCount);
   }
 
   function AddMaterial(importerMenu, materialsGroup, material) {
     materialsGroup.AddSubItem(material.name, {
       openCloseButton: {
-        onOpen: function (contentDiv, material) {
+        onOpen: function(contentDiv, material) {
           contentDiv.empty();
           var table = new InfoTable(contentDiv);
-          table.AddColorRow('Ambient', material.ambient);
-          table.AddColorRow('Diffuse', material.diffuse);
-          table.AddColorRow('Specular', material.specular);
-          table.AddRow('Shininess', material.shininess.toFixed(2));
-          table.AddRow('Opacity', material.opacity.toFixed(2));
+          table.AddColorRow("Ambient", material.ambient);
+          table.AddColorRow("Diffuse", material.diffuse);
+          table.AddColorRow("Specular", material.specular);
+          table.AddRow("Shininess", material.shininess.toFixed(2));
+          table.AddRow("Opacity", material.opacity.toFixed(2));
         },
-        title: 'Show/Hide Information',
+        title: "Show/Hide Information",
         userData: material
       }
     });
@@ -239,7 +287,7 @@ ImporterApp.prototype.GenerateMenu = function () {
   function AddMesh(importerApp, importerMenu, meshesGroup, mesh, meshIndex) {
     meshesGroup.AddSubItem(mesh.name, {
       openCloseButton: {
-        onOpen: function (contentDiv, mesh) {
+        onOpen: function(contentDiv, mesh) {
           contentDiv.empty();
           var table = new InfoTable(contentDiv);
 
@@ -247,7 +295,11 @@ ImporterApp.prototype.GenerateMenu = function () {
           var max = new JSM.Coord(-JSM.Inf, -JSM.Inf, -JSM.Inf);
           var i, vertex;
           for (i = 0; i < mesh.vertices.length; i = i + 3) {
-            vertex = new JSM.Coord(mesh.vertices[i], mesh.vertices[i + 1], mesh.vertices[i + 2]);
+            vertex = new JSM.Coord(
+              mesh.vertices[i],
+              mesh.vertices[i + 1],
+              mesh.vertices[i + 2]
+            );
             min.x = JSM.Minimum(min.x, vertex.x);
             min.y = JSM.Minimum(min.y, vertex.y);
             min.z = JSM.Minimum(min.z, vertex.z);
@@ -255,9 +307,9 @@ ImporterApp.prototype.GenerateMenu = function () {
             max.y = JSM.Maximum(max.y, vertex.y);
             max.z = JSM.Maximum(max.z, vertex.z);
           }
-          table.AddRow('X Size', (max.x - min.x).toFixed(2));
-          table.AddRow('Y Size', (max.y - min.y).toFixed(2));
-          table.AddRow('Z Size', (max.z - min.z).toFixed(2));
+          table.AddRow("X Size", (max.x - min.x).toFixed(2));
+          table.AddRow("Y Size", (max.y - min.y).toFixed(2));
+          table.AddRow("Z Size", (max.z - min.z).toFixed(2));
 
           var triangleCount = 0;
           var triangles;
@@ -266,33 +318,37 @@ ImporterApp.prototype.GenerateMenu = function () {
             triangleCount += triangles.parameters.length / 9;
           }
 
-          table.AddRow('Vertex count', mesh.vertices.length / 3);
-          table.AddRow('Triangle count', triangleCount);
+          table.AddRow("Vertex count", mesh.vertices.length / 3);
+          table.AddRow("Triangle count", triangleCount);
         },
-        title: 'Show/Hide Information',
+        title: "Show/Hide Information",
         userData: mesh
       },
-      userButtons: [{
-          id: 'showhidemesh-' + meshIndex,
-          onCreate: function (image) {
-            image.attr('src', 'images/visible.png');
+      userButtons: [
+        {
+          id: "showhidemesh-" + meshIndex,
+          onCreate: function(image) {
+            image.attr("src", "images/visible.png");
           },
-          onClick: function (image, meshIndex) {
+          onClick: function(image, meshIndex) {
             var visible = importerApp.ShowHideMesh(meshIndex);
-            image.attr('src', visible ? 'images/visible.png' : 'images/hidden.png');
+            image.attr(
+              "src",
+              visible ? "images/visible.png" : "images/hidden.png"
+            );
           },
-          title: 'Show/Hide Mesh',
+          title: "Show/Hide Mesh",
           userData: meshIndex
         },
         {
-          id: 'fitinwindow-' + meshIndex,
-          onCreate: function (image) {
-            image.attr('src', 'images/fitinwindowsmall.png');
+          id: "fitinwindow-" + meshIndex,
+          onCreate: function(image) {
+            image.attr("src", "images/fitinwindowsmall.png");
           },
-          onClick: function (image, meshIndex) {
+          onClick: function(image, meshIndex) {
             importerApp.FitMeshInWindow(meshIndex);
           },
-          title: 'Show/Hide Mesh',
+          title: "Show/Hide Mesh",
           userData: meshIndex
         }
       ]
@@ -300,10 +356,10 @@ ImporterApp.prototype.GenerateMenu = function () {
   }
 
   var jsonData = this.viewer.GetJsonData();
-  var menu = $('.placeholder');
+  var menu = $(".placeholder");
   var importerMenu = new ImporterMenu(menu);
 
-  var filesGroup = AddDefaultGroup(importerMenu, 'Files', 'filesmenuitem');
+  var filesGroup = AddDefaultGroup(importerMenu, "Files", "filesmenuitem");
   filesGroup.AddSubItem(this.fileNames.main);
   var i;
   for (i = 0; i < this.fileNames.requested.length; i++) {
@@ -311,23 +367,35 @@ ImporterApp.prototype.GenerateMenu = function () {
   }
 
   if (this.fileNames.missing.length > 0) {
-    var missingFilesGroup = AddDefaultGroup(importerMenu, 'Missing Files', 'missingfilesmenuitem');
+    var missingFilesGroup = AddDefaultGroup(
+      importerMenu,
+      "Missing Files",
+      "missingfilesmenuitem"
+    );
     for (i = 0; i < this.fileNames.missing.length; i++) {
       missingFilesGroup.AddSubItem(this.fileNames.missing[i]);
     }
   }
 
-  var infoGroup = AddDefaultGroup(importerMenu, 'Information', 'informationmenuitem');
+  var infoGroup = AddDefaultGroup(
+    importerMenu,
+    "Information",
+    "informationmenuitem"
+  );
   AddInformation(infoGroup, jsonData);
 
-  var materialsGroup = AddDefaultGroup(importerMenu, 'Materials', 'materialsmenuitem');
+  var materialsGroup = AddDefaultGroup(
+    importerMenu,
+    "Materials",
+    "materialsmenuitem"
+  );
   var material;
   for (i = 0; i < jsonData.materials.length; i++) {
     material = jsonData.materials[i];
     AddMaterial(importerMenu, materialsGroup, material);
   }
 
-  var meshesGroup = AddDefaultGroup(importerMenu, 'Meshes', 'meshesmenuitem');
+  var meshesGroup = AddDefaultGroup(importerMenu, "Meshes", "meshesmenuitem");
   var mesh;
   for (i = 0; i < jsonData.meshes.length; i++) {
     mesh = jsonData.meshes[i];
@@ -335,37 +403,39 @@ ImporterApp.prototype.GenerateMenu = function () {
   }
 };
 
-ImporterApp.prototype.GenerateError = function (errorMessage) {
+ImporterApp.prototype.GenerateError = function(errorMessage) {
   this.viewer.RemoveMeshes();
-  var menu = $('.placeholder');
+  var menu = $(".placeholder");
   menu.empty();
 
   this.aboutDialog.Open({
-    title: 'Error',
-    text: '<div class="importerdialog">' + errorMessage + '</div>',
-    buttons: [{
-      text: 'ok',
-      callback: function (dialog) {
-        dialog.Close();
+    title: "Error",
+    text: '<div class="importerdialog">' + errorMessage + "</div>",
+    buttons: [
+      {
+        text: "ok",
+        callback: function(dialog) {
+          dialog.Close();
+        }
       }
-    }]
+    ]
   });
 };
 
-ImporterApp.prototype.Generate = function (progressBar) {
+ImporterApp.prototype.Generate = function(progressBar) {
   function ShowMeshes(importerApp, progressBar, merge) {
     importerApp.inGenerate = true;
     var environment = {
-      onStart: function (taskCount) {
-        console.log(taskCount, '初始化')
+      onStart: function(taskCount) {
+        console.log(taskCount, "初始化");
         progressBar.Init(taskCount);
       },
-      onProgress: function (currentTask) {
-        console.log('进度条加载中', currentTask)
+      onProgress: function(currentTask) {
+        console.log("进度条加载中", currentTask);
         progressBar.Step(currentTask + 1);
       },
-      onFinish: function () {
-        console.log('完成')
+      onFinish: function() {
+        console.log("完成");
         importerApp.GenerateMenu();
         importerApp.inGenerate = false;
         importerApp.SetReadyForTest();
@@ -381,7 +451,9 @@ ImporterApp.prototype.Generate = function (progressBar) {
 
   var jsonData = this.viewer.GetJsonData();
   if (jsonData.materials.length === 0 || jsonData.meshes.length === 0) {
-    this.GenerateError('Failed to open file. Maybe something is wrong with your file.');
+    this.GenerateError(
+      "Failed to open file. Maybe something is wrong with your file."
+    );
     this.SetReadyForTest();
     return;
   }
@@ -389,18 +461,20 @@ ImporterApp.prototype.Generate = function (progressBar) {
   var myThis = this;
   if (jsonData.meshes.length > 250) {
     this.aboutDialog.Open({
-      title: 'Information',
-      text: '<div class="importerdialog">The model contains a large number of meshes. It can cause performance problems. Would you like to merge meshes?</div>',
-      buttons: [{
-          text: 'yes',
-          callback: function (dialog) {
+      title: "Information",
+      text:
+        '<div class="importerdialog">The model contains a large number of meshes. It can cause performance problems. Would you like to merge meshes?</div>',
+      buttons: [
+        {
+          text: "yes",
+          callback: function(dialog) {
             ShowMeshes(myThis, progressBar, true);
             dialog.Close();
           }
         },
         {
-          text: 'no',
-          callback: function (dialog) {
+          text: "no",
+          callback: function(dialog) {
             ShowMeshes(myThis, progressBar, false);
             dialog.Close();
           }
@@ -409,31 +483,31 @@ ImporterApp.prototype.Generate = function (progressBar) {
     });
   } else {
     ShowMeshes(myThis, progressBar, false);
-    $('.placeholder').hide()
+    $(".placeholder").hide();
   }
 };
 
-ImporterApp.prototype.FitInWindow = function () {
+ImporterApp.prototype.FitInWindow = function() {
   this.viewer.FitInWindow();
 };
 
-ImporterApp.prototype.FitMeshInWindow = function (meshIndex) {
+ImporterApp.prototype.FitMeshInWindow = function(meshIndex) {
   this.viewer.FitMeshInWindow(meshIndex);
 };
 
-ImporterApp.prototype.SetFixUp = function () {
+ImporterApp.prototype.SetFixUp = function() {
   this.viewer.SetFixUp();
 };
 
-ImporterApp.prototype.SetNamedView = function (viewName) {
+ImporterApp.prototype.SetNamedView = function(viewName) {
   this.viewer.SetNamedView(viewName);
 };
 
-ImporterApp.prototype.SetView = function (viewType) {
+ImporterApp.prototype.SetView = function(viewType) {
   this.viewer.SetView(viewType);
 };
 
-ImporterApp.prototype.ShowHideMesh = function (meshIndex) {
+ImporterApp.prototype.ShowHideMesh = function(meshIndex) {
   this.meshVisibility[meshIndex] = !this.meshVisibility[meshIndex];
   if (this.meshVisibility[meshIndex]) {
     this.viewer.ShowMesh(meshIndex);
@@ -443,7 +517,7 @@ ImporterApp.prototype.ShowHideMesh = function (meshIndex) {
   return this.meshVisibility[meshIndex];
 };
 
-ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
+ImporterApp.prototype.ProcessFiles = function(fileList, isUrl) {
   this.ClearReadyForTest();
   this.aboutDialog.Close();
   if (this.inGenerate) {
@@ -462,25 +536,27 @@ ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
     processorFunc = JSM.ConvertURLListToJsonData;
   }
 
-  var menu = $('.placeholder');
+  var menu = $(".placeholder");
   //   menu.empty();
   if (isUrl) {
-    $('#example').hide()
-    $('.placeholder').show()
-    menu.html('文件处理中......');
+    $("#example").hide();
+    $(".placeholder").show();
+    menu.html("文件处理中......");
   } else {
-    menu.html('Loading files...');
+    menu.html("Loading files...");
   }
 
   processorFunc(userFiles, {
-    onError: function () {
-      myThis.GenerateError('No readable file found. You can open 3ds, obj and stl files.');
+    onError: function() {
+      myThis.GenerateError(
+        "No readable file found. You can open 3ds, obj and stl files."
+      );
       myThis.SetReadyForTest();
       return;
     },
-    onReady: function (fileNames, jsonData) {
+    onReady: function(fileNames, jsonData) {
       myThis.fileNames = fileNames;
-      console.log(fileNames)
+      console.log(fileNames);
       myThis.viewer.SetJsonData(jsonData);
       menu.empty();
       var progressBar = new ImporterProgressBar(menu);
@@ -489,38 +565,38 @@ ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
   });
 };
 
-ImporterApp.prototype.DragOver = function (event) {
+ImporterApp.prototype.DragOver = function(event) {
   event.stopPropagation();
   event.preventDefault();
-  event.dataTransfer.dropEffect = 'copy';
+  event.dataTransfer.dropEffect = "copy";
 };
 
-ImporterApp.prototype.Drop = function (event) {
+ImporterApp.prototype.Drop = function(event) {
   event.stopPropagation();
   event.preventDefault();
   this.ResetHash();
   this.ProcessFiles(event.dataTransfer.files, false);
 };
 
-ImporterApp.prototype.FileSelected = function (event) {
+ImporterApp.prototype.FileSelected = function(event) {
   event.stopPropagation();
   event.preventDefault();
   this.ResetHash();
   this.ProcessFiles(event.target.files, false);
 };
 
-ImporterApp.prototype.OpenFile = function () {
-  var fileInput = document.getElementById('file');
+ImporterApp.prototype.OpenFile = function() {
+  var fileInput = document.getElementById("file");
   fileInput.click();
 };
 
-ImporterApp.prototype.ResetHash = function () {
+ImporterApp.prototype.ResetHash = function() {
   if (window.location.hash.length > 1) {
-    window.location.hash = '';
+    window.location.hash = "";
   }
 };
 
-ImporterApp.prototype.LoadFilesFromHash = function () {
+ImporterApp.prototype.LoadFilesFromHash = function() {
   // if (window.location.hash.length < 2) {
   //   return false;
   // }
@@ -531,32 +607,50 @@ ImporterApp.prototype.LoadFilesFromHash = function () {
   // console.log(fileList, '====')
   // console.log(window.location.hash)
   axios({
-    url: 'http://0.0.0.0:8000/testzip/1024.zip',
-    method: 'GET',
-    responseType: 'blob', // important
-  }).then((res) => {
-    console.log(res)
-    var data = new Blob([res.data])
-    var zip = new JSZip()
-    console.log(data)
-    zip.loadAsync(data).then((response) => {
-      console.log(response.files)
+    url: "http://0.0.0.0:8000/testzip/1024.zip",
+    method: "GET",
+    responseType: "blob", // important,
+    onDownloadProgress: function(progressEvent) {
+      var progress = progressEvent.loaded / progressEvent.total;
+      console.log(parseInt(progress * 100), progressEvent);
+      if (progressEvent.lengthComputable) {
+        console.log(progressEvent.lengthComputable);
+      }
+    }
+  }).then(res => {
+    console.log(res);
+    var data = new Blob([res.data]);
+    var zip = new JSZip();
+    console.log(data);
+    zip.loadAsync(data).then(response => {
+      console.log(response.files);
+      var files = Object.values(response.files).splice(1);
+      // files.forEach(el => {
+      //   console.log(el)
+      // });
+      console.log(files);
       // if ( zip.files[ 'model.obj' ] && zip.files[ 'materials.mtl' ] ) {
       //   var materials = new THREE.MTLLoader().parse( zip.file( 'materials.mtl' ).asText() );
       //   var object = new THREE.OBJLoader().setMaterials( materials ).parse( zip.file( 'model.obj' ).asText() );
       //   editor.execute( new AddObjectCommand( object ) );
 
       // }
-    })
-  })
-  fileList = ['images/1024/wan.jpg', 'images/1024/wan.mtl', 'images/1024/wan.obj', 'images/1024/wan1.jpg', 'images/1024/wan2.jpg']
+    });
+  });
+  fileList = [
+    "images/1024/wan.jpg",
+    "images/1024/wan.mtl",
+    "images/1024/wan.obj",
+    "images/1024/wan1.jpg",
+    "images/1024/wan2.jpg"
+  ];
   this.ProcessFiles(fileList, true);
-  console.log('loadingFiles')
+  console.log("loadingFiles");
   return true;
 };
-
-window.onload = function () {
-  var importerApp = new ImporterApp();
+var importerApp;
+window.onload = function() {
+  importerApp = new ImporterApp();
   importerApp.Init();
   // ExtensionIncludes
   importerApp.AddExtension(new ExampleExtension());
