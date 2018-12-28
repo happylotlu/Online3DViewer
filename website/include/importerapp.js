@@ -136,9 +136,7 @@ ImporterApp.prototype.Init = function () {
   window.onhashchange = this.LoadFilesFromHash.bind(this);
   var hasHashModel = this.LoadFilesFromHash();
   $("#example").show();
-  console.log(hasHashModel);
   if (!hasHashModel) {
-    console.log("开始显示数据1");
     this.ShowAboutDialog();
   }
 };
@@ -229,7 +227,6 @@ ImporterApp.prototype.JsonLoaded = function (progressBar) {
   for (i = 0; i < jsonData.meshes.length; i++) {
     this.meshVisibility[i] = true;
   }
-  console.log(jsonData);
   this.Generate(progressBar);
 };
 
@@ -553,7 +550,6 @@ ImporterApp.prototype.ProcessFiles = function (fileList, isUrl) {
     },
     onReady: function (fileNames, jsonData) {
       myThis.fileNames = fileNames;
-      console.log(fileNames);
       myThis.viewer.SetJsonData(jsonData);
       menu.empty();
       var progressBar = new ImporterProgressBar(menu);
@@ -603,19 +599,20 @@ ImporterApp.prototype.LoadFilesFromHash = function () {
   // var fileList = hash.split(',');
   // console.log(fileList, '====')
   // console.log(window.location.hash)
-  var fileList = [
-    "images/1024/wan.jpg",
-    "images/1024/wan.mtl",
-    "images/1024/wan.obj",
-    "images/1024/wan1.jpg",
-    "images/1024/wan2.jpg"
-  ];
-  this.ProcessFiles(fileList, true);
-  console.log("loadingFiles");
+  // fileList = [
+  //   "images/1024/wan.jpg",
+  //   "images/1024/wan.mtl",
+  //   "images/1024/wan.obj",
+  //   "images/1024/wan1.jpg",
+  //   "images/1024/wan2.jpg"
+  // ];
+  this.ProcessFiles(fileList, false);
   return true;
 };
 var importerApp;
 var files = []
+var fileList = []
+let promises = []
 window.onload = function () {
   importerApp = new ImporterApp();
   axios({
@@ -624,34 +621,38 @@ window.onload = function () {
     responseType: "blob", // important,
     onDownloadProgress: function (progressEvent) {
       var progress = progressEvent.loaded / progressEvent.total;
+      console.log(parseInt(progress * 100))
       if (progressEvent.lengthComputable) {
         $('.progress-bar').text(`${parseInt(progress * 100)}%`)
         $('.progress-bar').css('width', `${parseInt(progress * 100)}%`)
       }
     }
   }).then(res => {
-    console.log(res);
-
     var data = new Blob([res.data]);
     var zip = new JSZip();
-    console.log(data);
+    var blobArr = []
     zip.loadAsync(data).then(response => {
-      console.log(response.files);
-      files = Object.values(response.files).splice(1, Object.values(response.files).length);
-      console.log(files)
+      for (var k in response.files) {
+        if (k.indexOf('_') === -1) {
+          blobArr.push(response.files[k])
+        }
+      }
+      files = blobArr.splice(1, blobArr.length);
       files.forEach(el => {
-        // // console.log(el)
-        el.async('blob').then((res) => {
-          var url = URL.createObjectURL(res)
-          // fileList.push(url)
-        })
+        promises.push(
+          el.async('blob').then((res) => {
+            var aloneFile = new File([res], el.name.slice(5, el.name.length))
+            return aloneFile
+          })
+        )
+      });
+      Promise.all(promises).then((res) => {
+        fileList = res
+        importerApp.Init();
+      // ExtensionIncludes
+      importerApp.AddExtension(new ExampleExtension());
+      // ExtensionIncludesEnd
       });
     });
-    importerApp.Init();
-    // ExtensionIncludes
-    importerApp.AddExtension(new ExampleExtension());
-    // ExtensionIncludesEnd
-    console.log(files)
   });
-
 };

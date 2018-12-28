@@ -6225,6 +6225,7 @@ JSM.ConvertFileListToJsonData = function (a, b) {
   JSM.ConvertImportFileListToJsonData(c, b)
 };
 JSM.ConvertURLListToJsonData = function (a, b) {
+  console.log(a, b)
   var c = new JSM.ImportFileList;
   c.InitFromURLs(a);
   JSM.ConvertImportFileListToJsonData(c, b)
